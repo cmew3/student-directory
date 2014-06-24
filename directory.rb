@@ -29,13 +29,17 @@ students_fixed =[
 ]
 
 def input_students
-	puts "Please enter the names of the students"
+	puts "Please enter the student name"
 	puts "To finish, just hit return twice"
 	students = []
 	name = gets.chomp
 	while !name.empty? do
-		students << {:name => name, :cohort => :june}
-		puts "Now we have #{students.length} students"
+		puts "What is #{name}'s favourite hobby?"
+		hobby = gets.chomp
+		puts "What is #{name}'s country of birth?"
+		country = gets.chomp
+		students << {:name => name, :cohort => :june, :hobby => hobby, :country => country}
+		puts "Please enter the next student's name (or press enter twice to finish)"
 		name = gets.chomp
 	end
 	students
@@ -47,10 +51,9 @@ def print_header
 end
 
 def print(students)
-	number =0
-	while !students[number].nil?
-		puts " #{students[number][:name]} (#{students[number][:cohort].capitalize} cohort)" 
-		number +=1
+	students.each_with_index do |student, number|
+		puts student
+		puts "#{number+1}. #{student[:name]} (#{student[:cohort].capitalize} cohort). Hobby: #{student[:hobby]}. Country: #{student[:country]} " 
 	end
 end
 
