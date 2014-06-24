@@ -47,8 +47,10 @@ def print_header
 end
 
 def print(students)
-	students.each do |student|
-		puts "#{student[:name]} (#{student[:cohort].capitalize} cohort)"
+	number =0
+	while !students[number].nil?
+		puts " #{students[number][:name]} (#{students[number][:cohort].capitalize} cohort)" 
+		number +=1
 	end
 end
 
