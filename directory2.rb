@@ -4,20 +4,32 @@ def get_students
 	name = gets.chomp
 	students =[]
 	while !name.empty?
+		puts "Which cohort is #{name} in?"
+		cohort = gets.chomp.downcase
+		cohort = check_cohort cohort
 		puts "What is #{name}'s hobby?"
 		hobby = gets.chomp
 		puts "What is #{name}'s country of birth?"
 		country = gets.chomp
-		students << {:name => name, :cohort => "June",:hobby => hobby, :country => country}
+		students << {:name => name, :cohort =>  cohort,:hobby => hobby, :country => country}
 		puts "There are now #{students.length} students in our directory. Add another student or Enter twice to exit"
 		name = gets.chomp
 	end
 	return students
 end
 
+def check_cohort cohort_input
+	months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+	while !months.include?(cohort_input)
+		puts 'That doesn\'t look like a month, please enter a month'
+		cohort_input = gets.chomp
+	end
+	cohort_input.to_sym
+end
+
 def print_students student_list
 	student_list.each_with_index do |student,index|
-		puts "#{index+1}. #{student[:name]} in the #{student[:cohort]} cohort comes from #{student[:country]} and enjoys #{student[:hobby]}"
+		puts "#{index+1}. #{student[:name]} in the #{student[:cohort].capitalize} cohort comes from #{student[:country]} and enjoys #{student[:hobby]}"
 	end
 
 end
