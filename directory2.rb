@@ -21,13 +21,14 @@ def get_students
 		end
 		name = gets.strip
 	end
+	save_students
 	@student_list
 end
 
 def check_cohort cohort_input
 	while !$months.include?(cohort_input)
 		puts 'That doesn\'t look like a month, please enter a month'
-		cohort_input = gets.strip
+		cohort_input = gets.strip.downcase
 	end
 	cohort_input.to_sym
 end
@@ -38,7 +39,7 @@ def print_students
 		@student_list.each_with_index do |student,index|
 			puts "#{student[:name]} in the #{student[:cohort].capitalize} cohort comes from #{student[:country]} and enjoys #{student[:hobby]}" if student[:cohort]==month.to_sym
 		end
-	 end
+	end
 end
 
 def print_header
@@ -97,4 +98,16 @@ def interactive_menu
 	end # end loop
 end #end menu def
 
+def save_students
+	#open the file for writing
+	file = File.open("students.csv","w")
+	@student_list.each do |student|
+		student_data = [student[:name], student[:cohort], student[:hobby], student[:country]]
+		csv_line = student_data.join(",")
+		file.puts csv_line
+	end
+	file.close
+end
+
 interactive_menu
+save_students
