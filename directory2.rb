@@ -73,24 +73,27 @@ def show_students
 	end
 end
 
+def process(choice)
+	case choice
+		when '1'
+			#input students
+			@student_list = get_students
+		when '2'
+			#show students
+			show_students
+		when '9'
+			puts "Goodbye"
+			exit
+		else
+			puts "I don't know what you meant, please type a number to choose from our menu."
+	end #end case
+end
+
 def interactive_menu
 	puts 'Welcome to our directory.'
 	loop do
 		print_menu
-		choice = gets.chomp
-		case choice
-			when '1'
-				#input students
-				@student_list = get_students
-			when '2'
-				#show students
-				show_students
-			when '9'
-				puts "Goodbye"
-				exit
-			else
-				puts "I don't know what you meant, please type a number to choose from our menu."
-		end #end case
+		process(gets.chomp)
 	end # end loop
 end #end menu def
 
