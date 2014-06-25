@@ -32,10 +32,10 @@ def check_cohort cohort_input
 	cohort_input.to_sym
 end
 
-def print_students student_list
+def print_students
 	# student_list.sort_by! {|student| student[:cohort]}
 	$months.each do |month|
-		student_list.each_with_index do |student,index|
+		@student_list.each_with_index do |student,index|
 			puts "#{student[:name]} in the #{student[:cohort].capitalize} cohort comes from #{student[:country]} and enjoys #{student[:hobby]}" if student[:cohort]==month.to_sym
 		end
 	 end
@@ -45,11 +45,11 @@ def print_header
 	puts "The students at Maker's Academy are:"
 end
 
-def print_footer student_list
-	if student_list.length <= 1
-		puts "There is #{student_list.length} lovely student in our cohort!"
+def print_footer
+	if @student_list.length <= 1
+		puts "There is #{@student_list.length} lovely student in our cohort!"
 	else
-		puts "There are #{student_list.length} lovely students in our cohort!"
+		puts "There are #{@student_list.length} lovely students in our cohort!"
 	end
 end
 
@@ -65,9 +65,9 @@ def show_students
 	if @student_list.length >0
 		print_header
 		puts ""
-		print_students @student_list 
+		print_students
 		puts ""
-		print_footer @student_list
+		print_footer
 	else
 		puts 'No students to show, try adding some students!'
 	end
