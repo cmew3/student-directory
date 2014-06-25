@@ -28,10 +28,14 @@ def check_cohort cohort_input
 end
 
 def print_students student_list
-	student_list.each_with_index do |student,index|
-		puts "#{index+1}. #{student[:name]} in the #{student[:cohort].capitalize} cohort comes from #{student[:country]} and enjoys #{student[:hobby]}"
-	end
+	# student_list.sort_by! {|student| student[:cohort]}
 
+	months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+	months.each do |month|
+		student_list.each_with_index do |student,index|
+			puts "#{student[:name]} in the #{student[:cohort].capitalize} cohort comes from #{student[:country]} and enjoys #{student[:hobby]}" if student[:cohort]==month.to_sym
+		end
+	 end
 end
 
 def print_header
