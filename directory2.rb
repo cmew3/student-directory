@@ -21,7 +21,6 @@ def get_students
 		end
 		name = gets.strip
 	end
-	save_students
 	@student_list
 end
 
@@ -36,8 +35,13 @@ end
 def print_students
 	# student_list.sort_by! {|student| student[:cohort]}
 	$months.each do |month|
-		@student_list.each_with_index do |student,index|
-			puts "#{student[:name]} in the #{student[:cohort].capitalize} cohort comes from #{student[:country]} and enjoys #{student[:hobby]}" if student[:cohort]==month.to_sym
+		student_list_by_month = @student_list.select {|student| student[:cohort]==month.to_sym}
+		if student_list_by_month.length > 0
+			puts "#{month.capitalize} cohort"
+			student_list_by_month.each_with_index do |student,index|
+				puts "#{index+1}. #{student[:name]} comes from #{student[:country]} and enjoys #{student[:hobby]}"
+			end
+			puts ""
 		end
 	end
 end
@@ -59,6 +63,8 @@ def print_menu
 	puts 'Please choose from the following options:'
 	puts '1. Input the students'
 	puts '2. Show the students'
+	puts '3. Save the students to file students.csv'
+	puts '4. Load students from file'
 	puts '9. Exit programme'
 end
 
@@ -82,6 +88,10 @@ def process(choice)
 		when '2'
 			#show students
 			show_students
+		when '3'
+			save_students
+		when '4'
+			load_students
 		when '9'
 			puts "Goodbye"
 			exit
@@ -109,5 +119,12 @@ def save_students
 	file.close
 end
 
+def load_students (filename = "students.csv")
+	file = File.open(filename, "r")
+	file.readlines.each do |line|
+		name, cohort, hobby, country = line.chomp.split(',')
+		@student_list << {:name => name, :cohort => cohort.to_sym, :hobby => hobby, :country => country}
+	end
+end
+
 interactive_menu
-save_students
