@@ -1,72 +1,147 @@
+$months = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december']
+@student_list = []
 
-
-students_fixed =[
-	{:name => "Dave", :cohort=> :june},
-	{:name => "Eddie", :cohort =>:june},
-	{:name => "Catharina", :cohort =>:june},
-	{:name => "Igor", :cohort => :june},
-	{:name => "Marco", :cohort => :june},
-	{:name => "Lisa", :cohort=> :june},
-	{:name => "Michiel", :cohort =>:june},
-	{:name => "Jean", :cohort =>:june},
-	{:name => "Nicola", :cohort => :june},
-	{:name => "Jennie", :cohort => :june},
-	{:name => "Iona", :cohort=> :june},
-	{:name => "Nikesh", :cohort =>:june},
-	{:name => "Chloe", :cohort =>:june},
-	{:name => "Toan", :cohort => :june},
-	{:name => "Jamie", :cohort => :june},
-	{:name => "Peter", :cohort=> :june},
-	{:name => "Talal", :cohort =>:june},
-	{:name => "Charlie", :cohort =>:june},
-	{:name => "Charlotte", :cohort => :june},
-	{:name => "Thomas", :cohort => :june},
-	{:name => "Zoe", :cohort=> :june},
-	{:name => "Hannah", :cohort =>:june},
-	{:name => "Joe", :cohort =>:june},
-	{:name => "Alex", :cohort => :june},
-	{:name => "Jeremy", :cohort => :june}
-]
-
-def input_students
-	puts "Please enter the student name"
-	puts "To finish, just hit return twice"
-	students = []
-	name = gets.chomp
-	while !name.empty? do
-		puts "What is #{name}'s favourite hobby?"
-		hobby = gets.chomp
+def add_students
+	puts "Please enter the student name."
+	name = STDIN.gets.chomp
+	while !name.empty?
+		puts "Which cohort is #{name} in?"
+		cohort = input_valid_cohort
+		puts "What is #{name}'s hobby?"
+		hobby = STDIN.gets.chomp
 		puts "What is #{name}'s country of birth?"
-		country = gets.chomp
-		students << {:name => name, :cohort => :june, :hobby => hobby, :country => country}
-		puts "Please enter the next student's name (or press enter twice to finish)"
-		name = gets.chomp
+		country = STDIN.gets.chomp
+		@student_list << {:name => name, :cohort =>  cohort,:hobby => hobby, :country => country}
+		puts "There is now #{@student_list.length} student#{s_if_plural(@student_list)} in our directory. Add another student or Enter twice to exit"
+		name = STDIN.gets.chomp
 	end
-	students
+	@student_list
+end
+
+def input_valid_cohort
+	cohort = STDIN.gets.chomp.downcase
+	while !$months.include?(cohort)
+		puts 'That doesn\'t look like a month, please enter a month'
+		cohort = STDIN.gets.chomp.downcase
+	end
+	cohort.to_sym
+end
+
+def s_if_plural array
+	if array.length <2
+		return ""
+	else
+		return "s"
+end
+	
 end
 
 def print_header
-	puts "The students of my cohort at Makers Academy"
-	puts '-------------------'
+	puts ""
+	puts "The students at Maker's Academy are:"
+	puts "============================================"
+	puts ""
 end
 
-def print(students)
-	students.each_with_index do |student, number|
-		puts student
-		puts "#{number+1}. #{student[:name]} (#{student[:cohort].capitalize} cohort). Hobby: #{student[:hobby]}. Country: #{student[:country]} " 
+def print_students
+	$months.each do |month|
+		student_list_by_month = @student_list.select {|student| student[:cohort]==month.to_sym}
+		if student_list_by_month.length > 0
+			puts "#{month.capitalize} cohort"
+			puts "-"*(month.length + 7)
+			student_list_by_month.each_with_index do |student,index|
+				puts "#{index+1}. #{student[:name]} comes from #{student[:country]} and enjoys #{student[:hobby]}"
+			end
+			puts ""
+		end
 	end
 end
 
-def print_footer(names)
-	puts "Overall, we have #{names.length} great students"
+def print_footer
+	if @student_list.length <= 1
+		puts "There is #{@student_list.length} lovely student in our directory!"
+	else
+		puts "There are #{@student_list.length} lovely students in our directory!"
+	end
 end
 
-students = input_students
-print_header
-print(students)
-print_footer(students)
+def print_menu
+	puts ""
+	puts 'Please choose from the following options:'
+	puts ""
+	puts '1. Input the students'
+	puts '2. Show the students'
+	puts '3. Save the students to file students.csv'
+	puts '4. Load students from file'
+	puts '9. Exit programme'
+end
 
+def show_students
+	if @student_list.length >0
+		print_header
+		print_students
+		print_footer
+	else
+		puts 'No students to show, try adding some students!'
+	end
+end
 
+def process(choice)
+	case choice
+		when '1'
+			@student_list = add_students
+		when '2'
+			show_students
+		when '3'
+			save_students
+		when '4'
+			load_students
+		when '9'
+			puts "Goodbye"
+			exit
+		else
+			puts "I don't know what you meant, please type a number to choose from our menu."
+	end 
+end
 
+def interactive_menu
+	puts 'Welcome to our directory.'
+	loop do
+		print_menu
+		process(STDIN.gets.chomp)
+	end 
+end 
 
+def save_students
+	#open the file for writing
+	file = File.open("students.csv","w")
+	@student_list.each do |student|
+		student_data = [student[:name], student[:cohort], student[:hobby], student[:country]]
+		csv_line = student_data.join(",")
+		file.puts csv_line
+	end
+	file.close
+end
 
+def valid_file
+	ARGV.first == nil ? filename = "students.csv" : filename = ARGV.first
+	puts filename
+	puts File.exists?(filename)
+	if File.exists?(filename)
+		return filename
+	else
+		puts "Sorry #{filename} name not recognised. Exiting program"
+		exit
+	end
+end
+
+def load_students
+	filename = valid_file
+	file = File.open(filename, "r")
+	file.readlines.each do |line|
+		name, cohort, hobby, country = line.chomp.split(',')
+		@student_list << {:name => name, :cohort => cohort.to_sym, :hobby => hobby, :country => country}
+	end
+end
+
+interactive_menu
